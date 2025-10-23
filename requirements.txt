@@ -1,0 +1,7 @@
+streamlit
+clickhouse-connect
+pandas
+plotly
+python-dotenv
+dbt-clickhouse
+yfinance
