@@ -251,3 +251,223 @@ FROM cumulative_users
 WHERE month >= addMonths(toStartOfMonth(today()), -6)
 ORDER BY month ASC
 """
+
+MARKET_VOLUME = """
+WITH
+rounds_with_lofty_swaps AS (
+    SELECT DISTINCT round AS rnd
+    FROM mainnet.txn
+    WHERE app_id IN (
+            SELECT id AS contract_id
+            FROM mainnet.app
+            WHERE creator_addr_id = 2402554280
+        )
+      AND has_inners
+      AND realtime >= '2022-09-13'
+),
+lofty_swap_intras AS (
+    SELECT
+        t1.round,
+        tt.intra AS inner_intra,
+        tt.parent AS parent_intra,
+        t1.realtime,
+        t1.txid,
+        t1.type_ext AS parent_type,
+        t1.app_id,
+        t2.type_ext AS child_type,
+        t2.asset_id,
+        t2.amount
+    FROM mainnet.txn AS t1
+    INNER JOIN mainnet.txntree AS tt
+        ON t1.round = tt.round
+       AND t1.intra = tt.parent
+    INNER JOIN mainnet.txn AS t2
+        ON t1.round = t2.round
+       AND t2.intra = tt.intra
+    WHERE t1.realtime >= '2022-09-13'
+      AND t1.round IN (SELECT rnd FROM rounds_with_lofty_swaps)
+      AND t1.app_id IN (
+            SELECT id AS contract_id
+            FROM mainnet.app
+            WHERE creator_addr_id = 2402554280
+        )
+      AND t1.has_inners
+      AND t2.asset_id = 31566704
+      AND tt.intra = tt.parent + 1
+      AND JSONExtract(t1.txn_extra, 'apaa', 'Array(String)')[1] = 'U3dhcA=='
+      AND JSONExtract(t1.txn_extra, 'apas', 'Array(String)')[1] = '31566704'
+    SETTINGS join_algorithm = 'full_sorting_merge'
+),
+monthly_volumes AS (
+    SELECT
+        toStartOfMonth(toDate(t1.realtime)) AS month_date,
+        sum(toFloat64(t2.amount)) / 1e6 AS monthly_volume
+    FROM lofty_swap_intras
+    GROUP BY month_date
+),
+month_bounds AS (
+    SELECT
+        min(month_date) AS min_month,
+        toStartOfMonth(today()) AS max_month
+    FROM monthly_volumes
+),
+month_spine AS (
+    SELECT arrayJoin(
+        arrayMap(
+            i -> addMonths((SELECT min_month FROM month_bounds), i),
+            range(
+                dateDiff('month', (SELECT min_month FROM month_bounds), (SELECT max_month FROM month_bounds)) + 1
+            )
+        )
+    ) AS month_date
+),
+complete_monthly AS (
+    SELECT
+        ms.month_date,
+        coalesce(mv.monthly_volume, 0) AS monthly_volume
+    FROM month_spine AS ms
+    LEFT JOIN monthly_volumes AS mv ON ms.month_date = mv.month_date
+),
+cumulative AS (
+    SELECT
+        month_date,
+        monthly_volume,
+        sum(monthly_volume) OVER (
+            ORDER BY month_date ASC
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS cumulative_market_volume
+    FROM complete_monthly
+)
+SELECT
+    month_date AS month,
+    monthly_volume AS market_volume,
+    cumulative_market_volume
+FROM cumulative
+WHERE month_date >= addMonths(toStartOfMonth(today()), -12)
+ORDER BY month_date ASC
+"""
+
+AMM_BUY = """
+WITH rounds_with_lofty_swaps AS (
+    SELECT DISTINCT round AS rnd
+    FROM mainnet.txn
+    WHERE realtime >= '2023-12-08'
+      AND positionCaseInsensitive(reinterpretAsString(base64Decode(note)), 'loftyamm-') > 0
+),
+buy_amts as (
+SELECT 
+    t1.realtime AS realtime,
+    sum(
+        toFloat64(
+            JSONExtractInt(
+                JSONExtractRaw(
+                    JSONExtractRaw(reinterpretAsString(base64Decode(t1.note)), 'data'),
+                    'meta'
+                ),
+                'amount'
+            )
+        )
+    ) / 1e6 AS buy_amt
+FROM mainnet.txn t1
+WHERE 
+    t1.realtime >= '2023-12-08'
+    AND t1.round IN (SELECT rnd FROM rounds_with_lofty_swaps)
+    AND t1.note IS NOT NULL
+    AND positionCaseInsensitive(reinterpretAsString(base64Decode(t1.note)), 'loftyamm-') > 0
+  AND JSONExtractString(
+      JSONExtractRaw(reinterpretAsString(base64Decode(t1.note)), 'data'),
+                                                                'method'
+                                                            ) = 'AssetTransferTxn'
+  AND JSONExtractInt(
+      JSONExtractRaw(JSONExtractRaw(reinterpretAsString(base64Decode(t1.note)), 'data'),
+                                                                                'meta'
+                                                                            ),
+                                                                            'assetId'
+                                                                        ) = 31566704
+GROUP BY realtime
+ORDER BY realtime ASC
+),
+monthly_buy AS (
+    SELECT
+        toStartOfMonth(realtime) AS month,
+        sum(buy_amt) AS monthly_buy_volume
+    FROM buy_amts
+    GROUP BY month
+),
+monthly_cumulative AS (
+    SELECT
+        month,
+        monthly_buy_volume,
+        sum(monthly_buy_volume) OVER (
+            ORDER BY month ASC
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS cumulative_buy_volume
+    FROM monthly_buy
+)
+SELECT
+    month,
+    monthly_buy_volume,
+    cumulative_buy_volume
+FROM monthly_cumulative
+WHERE month >= addMonths(toStartOfMonth(today()), -12)
+ORDER BY month ASC
+"""
+
+AMM_SELL = """
+WITH rounds_with_lofty_swaps AS (
+    SELECT DISTINCT round AS rnd,
+          realtime,
+          intra
+    FROM mainnet.txn
+    WHERE realtime >= '2023-12-08'
+      AND has_inners 
+      AND positionCaseInsensitive(reinterpretAsString(base64Decode(note)), 'loftyamm-') > 0
+      AND JSONExtractString(
+      JSONExtractRaw(reinterpretAsString(base64Decode(note)), 'data'),
+                                                                'method'
+                                                            ) = 'sell_base_token'
+),
+sell_amts as (
+select 
+        t1.rnd,
+       -- tt.intra inner_intra,
+        --tt.parent parent_intra,
+        t1.realtime as realtime,
+        t2.txid,
+        t2.type_ext,
+        t2.asset_id,
+        t2.amount/1e6 as sell_amt
+    from rounds_with_lofty_swaps t1
+    --join mainnet.txntree tt on (t1.round = tt.round and t1.intra = tt.parent) 
+    join mainnet.txn t2 on (t1.rnd = t2.round and t2.intra = t1.intra+2)
+    where 
+     t1.rnd in (select rnd from rounds_with_lofty_swaps)
+    and t2.asset_id = 31566704
+    AND t2.amount >0
+    settings join_algorithm = 'full_sorting_merge'    
+),
+monthly_sell AS (
+    SELECT
+        toStartOfMonth(realtime) AS month,
+        sum(sell_amt) AS monthly_sell_volume
+    FROM sell_amts
+    GROUP BY month
+),
+monthly_cumulative AS (
+    SELECT
+        month,
+        monthly_sell_volume,
+        sum(monthly_sell_volume) OVER (
+            ORDER BY month ASC
+            ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW
+        ) AS cumulative_sell_volume
+    FROM monthly_sell
+)
+SELECT
+    month,
+    monthly_sell_volume,
+    cumulative_sell_volume
+FROM monthly_cumulative
+WHERE month >= addMonths(toStartOfMonth(today()), -12)
+ORDER BY month ASC
+"""

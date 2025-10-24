@@ -10,8 +10,8 @@ project_root = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(project_root))
 
 from utils.clickhouse_client import run_query
-from queries.real_estate.queries import PROPERTIES, MARKET_CAP, ACTIVE_WALLETS
-from charts.real_estate.charts import create_mcap_chart, create_properties_chart, create_mau_chart
+from queries.real_estate.queries import PROPERTIES, MARKET_CAP, ACTIVE_WALLETS, MARKET_VOLUME, AMM_BUY, AMM_SELL
+from charts.real_estate.charts import create_mcap_chart, create_properties_chart, create_mau_chart, create_volumes_chart
 
 st.set_page_config(page_title="ALGORAND RWA - Real Estate", layout="wide")
 
@@ -49,8 +49,24 @@ def render():
     mau = mau_df.iloc[-1]['monthly_unique_users']
     mau_delta = mau/mau_df.iloc[-2]['monthly_unique_users'] - 1
 
+    rows, cols = fetch_data(MARKET_VOLUME)
+    vol_df = pd.DataFrame(rows, columns=cols)
+    
+    rows, cols = fetch_data(AMM_BUY)
+    amm_buy_df = pd.DataFrame(rows, columns=cols)
+    
+    rows, cols = fetch_data(AMM_SELL)
+    amm_sell_df = pd.DataFrame(rows, columns=cols)
+    
+    vol_df = vol_df.merge(amm_buy_df, on='month', how='left')
+    vol_df = vol_df.merge(amm_sell_df, on='month', how='left')
+    vol_df['month_vol'] = vol_df['market_volume'] + vol_df['monthly_buy_volume'] + vol_df['monthly_sell_volume']
+
+    vol = vol_df.iloc[-1]['month_vol']
+    vol_delta = vol/vol_df.iloc[-2]['month_vol'] - 1
+
     # First row with 4 columns
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
         st.metric(
@@ -62,13 +78,21 @@ def render():
 
     with col2:
         st.metric(
+            label=f"Monthly Volume",
+            value=format_large_number(vol),
+            delta=f"{vol_delta*100:.2f}%",
+            border=True
+        )
+
+    with col3:
+        st.metric(
             label="Total Tokenized Properties",
             value=f'{properties:.0f}',
             delta=f"{properties_delta*100:.2f}%",
             border=True
         )
 
-    with col3:
+    with col4:
         st.metric(
             label="Monthly Active Addresses",
             value=f"{mau:,.0f}",
@@ -80,6 +104,7 @@ def render():
     st.divider()
     chart_options = {
         "market_cap": "Market Cap",
+        "monthly_volume_re": "Monthly Volume",
         "monthly_properties": "Tokenized Properties",
         "mau": "Active Addresses"
     }
@@ -96,6 +121,7 @@ def render():
     # Add description based on selection
     chart_descriptions = {
         "market_cap": "Market Cap shows the evolution of the value  of all tokenized properties on Algorand.",
+        "monthly_volume_re": "Monthly volume transacted on Lofty",
         "monthly_properties": "The sum of monthly tokenized properties.",
         "mau": "Monthly number of wallets that have sent an on-chain transaction."
     }
@@ -110,6 +136,9 @@ def render():
             # Market Cap Data
             mcap_df['date'] = pd.to_datetime(mcap_df['date'])
             mcap_df = mcap_df[mcap_df['date'] >= pd.Timestamp.now() - pd.DateOffset(years=1)]
+            
+            vol_df['month'] = pd.to_datetime(vol_df['month'])
+            vol_df = vol_df[vol_df['month'] >= pd.Timestamp.now() - pd.DateOffset(years=1)]
 
         # Display selected chart
         if selection == "market_cap":
@@ -121,7 +150,17 @@ def render():
             # Optional: Show data table
             with st.expander("View Raw Data"):
                 st.dataframe(mcap_df, use_container_width=True)
-        
+
+        elif selection == "monthly_volume_re":
+            st.header("Monthly Volume")
+            st.markdown("Bar chart showing the monthly volume transacted.")
+            fig = create_volumes_chart(vol_df)
+            st.plotly_chart(fig, use_container_width=True)
+            
+            # Optional: Show data table
+            with st.expander("View Raw Data"):
+                st.dataframe(vol_df, use_container_width=True)
+
         elif selection == "monthly_properties":
             st.header("Tokenized Properties")
             st.markdown("Bar chart showing the number of tokenized properties on Lofty.")

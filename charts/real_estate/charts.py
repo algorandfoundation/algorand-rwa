@@ -52,6 +52,67 @@ def create_mcap_chart(mcap_df: pd.DataFrame) -> go.Figure:
     
     return fig
 
+def create_volumes_chart(vol_df: pd.DataFrame) -> go.Figure:
+    """
+    Create a bar chart for volume data.
+    
+    Args:
+        vol_df: DataFrame with volume data
+    
+    Returns:
+        Plotly Figure object with stacked bar chart
+    """
+    # Identify date column
+    date_col = 'month'
+    vol_df['total_vol'] = vol_df['cumulative_market_volume'] + vol_df['cumulative_buy_volume'] + vol_df['cumulative_sell_volume']
+ 
+    fig = go.Figure()
+    
+    fig.add_trace(go.Bar(
+        x=vol_df[date_col] if date_col else vol_df.index,
+        y=vol_df['month_vol'],
+        name='Monthly Volume Transfered',
+        marker_color='#2d2df1',
+        hovertemplate='<b>%{fullData.name}</b>: %{y:,.0f}<extra></extra>'
+    ))
+    
+    fig.add_trace(go.Scatter(
+        x=vol_df[date_col] if date_col else vol_df.index,
+        y=vol_df['total_vol'],
+        yaxis="y2",
+        name='Total Volume Transfered',
+        mode='lines',
+        line=dict(color='#17cac6'),
+        hovertemplate='<b>%{fullData.name}</b>: %{y:,.0f}<extra></extra>'
+    ))
+
+    fig.update_layout(
+        title='Monthly Volume Transfered',
+        xaxis_title='Month',
+        yaxis=dict(
+            title='Volume (USD)',
+            tickformat=',.0f'
+        ),
+        yaxis2=dict(
+            title='Total Volume (USD)',
+            tickformat=',.0f',
+            overlaying='y',
+            side='right'
+        ),
+        barmode='group',
+        hovermode='x unified',
+        template='plotly_white',
+        legend=dict(
+            orientation="h",
+            yanchor="bottom",
+            y=1.02,
+            xanchor="right",
+            x=1
+        ),
+        height=500
+    )
+    
+    return fig
 
 def create_properties_chart(properties_df: pd.DataFrame) -> go.Figure:
     """

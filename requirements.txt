@@ -3,5 +3,6 @@ clickhouse-connect
 pandas
 plotly
 python-dotenv
-dbt-clickhouse
+dbt-clickhouse>=1.7.0
+dbt-core>=1.7.0
 yfinance

@@ -28,16 +28,17 @@ st.markdown("""
     }
     
     .stTabs [data-baseweb="tab"] {
-        background-color: #002a42;
-        color: #ffffff;
-        border: 1px solid #17cac6;
-        border-radius: 4px;
+        background-color: #001324;
+        color: #17cac6;
+        border: 1px solid #001324;
+        border-radius: 15px;
+        font-size: 10px;
         padding: 10px 20px;
     }
     
     .stTabs [data-baseweb="tab"]:hover {
-        background-color: #0d8a87;
-        color: #ffffff;
+        background-color: #17CAC6;
+        color: #001324;
     }
     
     .stTabs [aria-selected="true"] {
@@ -48,15 +49,69 @@ st.markdown("""
     
     /* Button styling */
     .stButton > button {
-        background-color: #17cac6;
-        color: #001324;
-        border: none;
+        background-color: #001324;
+        color: #17cac6;
+        border: 1px solid #17cac6;
+        border-radius: 15px;
         font-weight: bold;
+        padding: 10px 20px;
     }
     
     .stButton > button:hover {
-        background-color: #0d8a87;
-        color: #ffffff;
+        background-color: #17cac6;
+        color: #001324;
+    }
+    
+/* Pills styling - Inactive state */
+    button[data-testid="stBaseButton-pills"] {
+        background-color: #001324 !important;
+        color: #17cac6 !important;
+        border: 1px solid #001324 !important;
+        border-radius: 15px !important;
+        padding: 8px 16px !important;
+        margin: 2px !important;
+    }
+    
+    button[data-testid="stBaseButton-pills"] p {
+        color: #17cac6 !important;
+        font-size: 12px !important;
+    }
+    
+    /* Pills hover - Inactive state */
+    button[data-testid="stBaseButton-pills"]:hover {
+        background-color: #17CAC6 !important;
+        border: 1px solid #17CAC6 !important;
+    }
+    
+    button[data-testid="stBaseButton-pills"]:hover p {
+        color: #001324 !important;
+    }
+    
+    /* Pills styling - Active/Selected state */
+    button[data-testid="stBaseButton-pillsActive"] {
+        background-color: #17cac6 !important;
+        color: #001324 !important;
+        border: 1px solid #17cac6 !important;
+        border-radius: 15px !important;
+        font-weight: bold !important;
+        padding: 8px 16px !important;
+        margin: 2px !important;
+    }
+    
+    button[data-testid="stBaseButton-pillsActive"] p {
+        color: #001324 !important;
+        font-size: 12px !important;
+        font-weight: bold !important;
+    }
+    
+    /* Pills hover - Active state (keep same styling) */
+    button[data-testid="stBaseButton-pillsActive"]:hover {
+        background-color: #17cac6 !important;
+        border: 1px solid #17cac6 !important;
+    }
+    
+    button[data-testid="stBaseButton-pillsActive"]:hover p {
+        color: #001324 !important;
     }
     
     /* Header styling - keep white */
@@ -65,7 +120,7 @@ st.markdown("""
     }
     
     h2, h3 {
-        color: #17cac6 !important;
+        color: #ffffff !important;
     }
     
     /* Metrics styling */
@@ -80,12 +135,32 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Main title
-col1, col2 = st.columns([4, 1])
+# Main title (centered, no button)
+st.markdown("<h1 style='text-align: center; color: #ffffff;'>Algorand - Real World Assets Dashboard (preAlpha)</h1>", unsafe_allow_html=True)
+
+st.markdown("---")
+
+# Tabs with refresh button in the same row
+col1, col2, col3 = st.columns([1, 6, 1])
+
 with col1:
-    st.markdown("<h1 style='text-align: center; color: #ffffff;'>Algorand - Real World Assets Dashboard</h1>", unsafe_allow_html=True)
+    st.write("")  # Spacer
+
 with col2:
-    if st.button("🔄 Refresh"):
+    # Create tabs
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
+        "Overview",
+        "Micropayments",
+        "Stablecoins",
+        "Commodities",
+        "Private Credit",
+        "Real Estate",
+        "Certificates",
+        "Loyalty"
+    ])
+
+with col3:
+    if st.button("🔄 Refresh", use_container_width=True):
         st.cache_data.clear()
         with st.spinner("Running dbt pipeline..."):
             subprocess.run(["/Users/marc/Documents/algorand-rwa/.venv/bin/dbt", "run", "--project-dir", "rwa_dbt"], check=True)
@@ -93,20 +168,6 @@ with col2:
         st.success("✅ dbt completed.")
         time.sleep(1)
         st.rerun()
-
-st.markdown("---")
-
-# Create tabs
-tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
-    "📊 Overview",
-    "💳 Micropayments",
-    "💵 Stablecoins",
-    "🌾 Commodities",
-    "💰 Private Credit",
-    "🏠 Real Estate",
-    "📜 Certificates",
-    "🎁 Loyalty"
-])
 
 # Render each tab
 with tab1:
