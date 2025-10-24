@@ -101,21 +101,21 @@ def render():
             st.header("Monthly Transactions")
             st.markdown("Bar chart displaying the monthly transactions generated on-chain.")
             fig = create_transactions_chart(tx_df)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(tx_df, use_container_width=True)
+                st.dataframe(tx_df)
         
         elif selection == "active_users_loyalty":
             st.header("Active Addresses")
             st.markdown("Bar chart showing the number of users for on-chain loyalty programs.")
             fig = create_mau_chart(addr_df)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(addr_df, use_container_width=True)
+                st.dataframe(addr_df)
         
         else:
             st.info("👆 Please select a chart type above to view the data.")

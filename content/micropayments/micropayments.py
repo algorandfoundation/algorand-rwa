@@ -77,7 +77,7 @@ def render():
     with col3:
         st.metric(
             label="Monthly Active Addresses",
-            value=f"{mau:,.0f}",
+            value=format_large_number(mau),
             delta=f"{mau_delta*100:.2f}%",
             border=True
         )
@@ -143,7 +143,7 @@ def render():
             st.header("Monthly Payments")
             st.markdown("Stacked bar chart to dispplay the different micropayments on Algorand.")
             fig = create_payments_chart(monthly_tx)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
@@ -163,11 +163,11 @@ def render():
             st.header("Active Addresses")
             st.markdown("Bar chart showing the number of active wallets on Lofty.")
             fig = create_addresses_chart(mau_df)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(mau_df, use_container_width=True)
+                st.dataframe(mau_df)
         
         else:
             st.info("👆 Please select a chart type above to view the data.")

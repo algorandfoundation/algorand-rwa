@@ -95,21 +95,21 @@ def render():
             st.header("Private Credit Deposits")
             st.markdown("Area chart with the historic for private credit deposits during the last year.")
             fig = create_dep_chart(borrows_df)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(borrows_df, use_container_width=True)
+                st.dataframe(borrows_df)
         
         elif selection == "total_borrowed":
             st.header("Private Credit Borrows")
             st.markdown("Area chart with the historic for private credit borrows during the last year.")
             fig = create_borrows_chart(borrows_df)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(borrows_df, use_container_width=True)
+                st.dataframe(borrows_df)
         
         else:
             st.info("👆 Please select a chart type above to view the data.")

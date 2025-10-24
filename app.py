@@ -21,6 +21,13 @@ st.set_page_config(
 # Custom CSS to enhance the theme from config.toml
 st.markdown("""
     <style>
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+    
+    /* Apply font globally */
+    html, body, [class*="css"] {
+        font-family: 'Inter', sans-serif;
+    }
     /* Tab/Pills styling to match your cyan theme */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
@@ -74,7 +81,7 @@ st.markdown("""
     
     button[data-testid="stBaseButton-pills"] p {
         color: #17cac6 !important;
-        font-size: 12px !important;
+        font-size: 14px !important;
     }
     
     /* Pills hover - Inactive state */
@@ -93,7 +100,6 @@ st.markdown("""
         color: #001324 !important;
         border: 1px solid #17cac6 !important;
         border-radius: 15px !important;
-        font-weight: bold !important;
         padding: 8px 16px !important;
         margin: 2px !important;
     }
@@ -101,7 +107,6 @@ st.markdown("""
     button[data-testid="stBaseButton-pillsActive"] p {
         color: #001324 !important;
         font-size: 12px !important;
-        font-weight: bold !important;
     }
     
     /* Pills hover - Active state (keep same styling) */

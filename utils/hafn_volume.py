@@ -35,7 +35,7 @@ def add_usd_volume(df, hafn_vol_col='hafn_vol', date_col='date'):
     df = df.merge(price_df, on=date_col, how='left')
     
     # Forward fill NaN values (weekends/holidays)
-    df['afnusd_close'] = df['afnusd_close'].fillna(method='ffill')
+    df['afnusd_close'] = df['afnusd_close'].ffill()
     
     # Calculate USD volume
     df['hafn_vol_usd'] = df['afnusd_close'] * df[hafn_vol_col]

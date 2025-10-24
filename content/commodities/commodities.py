@@ -17,13 +17,13 @@ st.set_page_config(page_title="ALGORAND RWA - Stablecoins", layout="wide")
 def format_large_number(num):
     """Format large numbers with K, M, B suffixes"""
     if num >= 1_000_000_000:
-        return f"${num/1_000_000_000:.1f}B"
+        return f"{num/1_000_000_000:.1f}B"
     elif num >= 1_000_000:
-        return f"${num/1_000_000:.1f}M"
+        return f"{num/1_000_000:.1f}M"
     elif num >= 1_000:
-        return f"${num/1_000:.1f}K"
+        return f"{num/1_000:.1f}K"
     else:
-        return f"${num:.0f}"
+        return f"{num:.0f}"
 
 @st.cache_data(ttl=3600)  # Auto-refresh cache every hour
 def fetch_data(query):
@@ -62,7 +62,7 @@ def render():
     with col1:
         st.metric(
             label=f"Market Cap",
-            value=format_large_number(mcap),
+            value=f"${format_large_number(mcap)}",
             delta=f"{mcap_delta*100:.2f}%",
             border=True
         )
@@ -70,7 +70,7 @@ def render():
     with col2:
         st.metric(
             label="Monthly Transfer Volume",
-            value=format_large_number(last30d_vol),
+            value=f"${format_large_number(last30d_vol)}",
             delta=f"{vol_delta*100:.2f}%",
             border=True
         )
@@ -78,7 +78,7 @@ def render():
     with col3:
         st.metric(
             label="Monthly Active Addresses",
-            value=f"{mau:,.0f}",
+            value=f"{format_large_number(mau)}",
             delta=f"{mau_delta*100:.2f}%",
             border=True
         )
@@ -86,7 +86,7 @@ def render():
     with col4:
         st.metric(
             label="Holders",
-            value=f"{holders:,.0f}",
+            value=f"{format_large_number(holders)}",
             delta="_",
             delta_color="off",
             border=True
@@ -149,31 +149,31 @@ def render():
             st.header("Commodities Market Cap")
             st.markdown("Area chart showing the market capitalization trends of various commodities.")
             fig = create_mcap_chart(mcap_df)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(mcap_df, use_container_width=True)
+                st.dataframe(mcap_df)
         
         elif selection == "volume_commodities":
             st.header("Commodities Transfer Volume")
             st.markdown("Bar chart comparing trading volumes across different commodities.")
             fig = create_volume_chart(monthly_vol)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(vol_df, use_container_width=True)
+                st.dataframe(vol_df)
         
         elif selection == "mau_commodities":
             st.header("Active Addresses")
             st.markdown("Bar chart showing the number of active wallets for each commodities.")
             fig = create_mau_chart(mau_df)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(mau_df, use_container_width=True)
+                st.dataframe(mau_df)
         
         else:
             st.info("👆 Please select a chart type above to view the data.")

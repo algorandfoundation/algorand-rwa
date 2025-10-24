@@ -103,21 +103,21 @@ def render():
             st.header("Certificates Issued")
             st.markdown("Bar chart displaying the monthly certificates issued on-chain.")
             fig = create_certificates_chart(cert_df)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(cert_df, use_container_width=True)
+                st.dataframe(cert_df)
         
         elif selection == "active_users":
             st.header("Active Addresses")
             st.markdown("Bar chart showing the number of users for on-chain certificates.")
             fig = create_mau_chart(addr_df)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig)
             
             # Optional: Show data table
             with st.expander("View Raw Data"):
-                st.dataframe(addr_df, use_container_width=True)
+                st.dataframe(addr_df)
         
         else:
             st.info("👆 Please select a chart type above to view the data.")
