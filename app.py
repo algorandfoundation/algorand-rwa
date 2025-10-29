@@ -184,11 +184,11 @@ with col2:
 with col3:
     if st.button("🔄 Refresh", use_container_width=True):
         st.cache_data.clear()
-        with st.spinner("Running dbt pipeline..."):
-            subprocess.run(["/Users/marc/Documents/algorand-rwa/.venv/bin/dbt", "run", "--project-dir", "rwa_dbt"], check=True)
+        #with st.spinner("Running dbt pipeline..."):
+        #    subprocess.run(["/Users/marc/Documents/algorand-rwa/.venv/bin/dbt", "run", "--project-dir", "rwa_dbt"], check=True)
 
-        st.success("✅ dbt completed.")
-        time.sleep(1)
+        #st.success("✅ dbt completed.")
+        #time.sleep(1)
         st.rerun()
 
 # Render each tab

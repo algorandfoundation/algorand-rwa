@@ -18,7 +18,7 @@ def add_usd_volume(df, hafn_vol_col='hafn_vol', date_col='date'):
     df[date_col] = pd.to_datetime(df[date_col])
     
     # Fetch AFNUSD data
-    afnusd = yf.download('AFNUSD=X', start=df[date_col].min(), end=df[date_col].max(), progress=False)
+    afnusd = yf.download('AFNUSD=X', start=df[date_col].min(), end=df[date_col].max(), progress=False, auto_adjust=True)
     # Handle multi-level columns from yfinance
     if isinstance(afnusd.columns, pd.MultiIndex):
         afnusd.columns = afnusd.columns.get_level_values(0)
