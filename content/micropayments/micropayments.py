@@ -96,7 +96,8 @@ def render():
         format_func=lambda option: chart_options[option],
         selection_mode="single",
         default="payments",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="pills_micro"  # Add this
     )
 
     # Add description based on selection

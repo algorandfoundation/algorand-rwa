@@ -91,7 +91,7 @@ def render():
     st.divider()
     chart_options = {
         "market_cap": "Market Cap",
-        "volume": "Transfer Volume Volume",
+        "volume": "Transfer Volume",
         "mau": "Active Addresses"
     }
 
@@ -101,7 +101,8 @@ def render():
         format_func=lambda option: chart_options[option],
         selection_mode="single",
         default="market_cap",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="pills_stables"  # Add this
     )
 
     # Add description based on selection

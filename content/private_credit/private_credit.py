@@ -70,7 +70,8 @@ def render():
         format_func=lambda option: chart_options[option],
         selection_mode="single",
         default="total_deposited",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="pills_privatecredit"  # Add this
     )
 
     # Add description based on selection

@@ -199,12 +199,10 @@ with tab1:
 with tab2:
     st.header("Micropayments")
     micropayments.render()
-    #overview.render()
 
 with tab3:
     st.header("Stablecoins")
     stablecoins.render()
-    #overview.render()
 
 with tab4:
     st.header("Commodities")

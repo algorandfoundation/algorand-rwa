@@ -56,7 +56,7 @@ def render():
 
     with col2:
         st.metric(
-            label="Monthly Users",
+            label="Monthly Active Addresses",
             value=format_large_number(addr),
             delta=f"{addr_delta*100:.2f}%",
             border=True
@@ -65,7 +65,7 @@ def render():
     st.divider()
     chart_options = {
         "certificates_issued": "Certificates Issued",
-        "active_users": "Active Users"
+        "active_users": "Active Addresses"
     }
 
     selection = st.pills(
@@ -74,7 +74,8 @@ def render():
         format_func=lambda option: chart_options[option],
         selection_mode="single",
         default="certificates_issued",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="pills_certificates"  # Add this
     )
 
     # Add description based on selection

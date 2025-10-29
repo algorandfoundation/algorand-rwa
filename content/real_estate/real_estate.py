@@ -120,7 +120,8 @@ def render():
         format_func=lambda option: chart_options[option],
         selection_mode="single",
         default="market_cap",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="pills_realestate"  # Add this
     )
 
     # Add description based on selection

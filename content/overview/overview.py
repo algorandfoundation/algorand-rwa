@@ -98,7 +98,8 @@ def render():
         format_func=lambda option: chart_options[option],
         selection_mode="single",
         default="overview_tx",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="pills_overview"  # Add this
     )
 
     # Add description based on selection

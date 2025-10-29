@@ -54,7 +54,7 @@ def render():
 
     with col2:
         st.metric(
-            label="Monthly Users",
+            label="Monthly Active Addresses",
             value=format_large_number(addr),
             delta=f"{addr_delta*100:.2f}%",
             border=True
@@ -63,7 +63,7 @@ def render():
     st.divider()
     chart_options = {
         "transactions_loyalty": "Monthly Transactions",
-        "active_users_loyalty": "WorldChess Active Users"
+        "active_users_loyalty": "Active Addresses"
     }
 
     selection = st.pills(
@@ -72,7 +72,8 @@ def render():
         format_func=lambda option: chart_options[option],
         selection_mode="single",
         default="transactions_loyalty",
-        label_visibility="collapsed"
+        label_visibility="collapsed",
+        key="pills_loyalty"  # Add this
     )
 
     # Add description based on selection
