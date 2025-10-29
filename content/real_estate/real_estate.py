@@ -125,8 +125,8 @@ def render():
 
     # Add description based on selection
     chart_descriptions = {
-        "market_cap": "Market Cap shows the evolution of the value  of all tokenized properties on Algorand.",
-        "monthly_volume_re": "Monthly volume transacted on Lofty",
+        "market_cap": "The evolution of the value of all tokenized properties on Algorand.",
+        "monthly_volume_re": "Monthly volume transacted on Lofty.",
         "monthly_properties": "The sum of monthly tokenized properties.",
         "mau": "Monthly number of wallets that have sent an on-chain transaction."
     }
@@ -147,8 +147,6 @@ def render():
 
         # Display selected chart
         if selection == "market_cap":
-            st.header("Stablecoin Market Cap")
-            st.markdown("Area chart showing the market capitalization of real estate on Algorand.")
             fig = create_mcap_chart(mcap_df)
             st.plotly_chart(fig)
             
@@ -157,8 +155,6 @@ def render():
                 st.dataframe(mcap_df)
 
         elif selection == "monthly_volume_re":
-            st.header("Monthly Volume")
-            st.markdown("Bar chart showing the monthly volume transacted.")
             fig = create_volumes_chart(vol_df)
             st.plotly_chart(fig)
             
@@ -167,8 +163,6 @@ def render():
                 st.dataframe(vol_df)
 
         elif selection == "monthly_properties":
-            st.header("Tokenized Properties")
-            st.markdown("Bar chart showing the number of tokenized properties on Lofty.")
             fig = create_properties_chart(property_df)
             st.plotly_chart(fig)
             
@@ -177,8 +171,6 @@ def render():
                 st.dataframe(mau_df)
         
         elif selection == "mau":
-            st.header("Active Addresses")
-            st.markdown("Bar chart showing the number of active wallets on Lofty.")
             fig = create_mau_chart(mau_df)
             st.plotly_chart(fig)
             
@@ -193,14 +185,7 @@ def render():
         # If fetch_data is not defined, show a placeholder
         st.error("⚠️ Data fetching function not found. Please ensure `fetch_data` is imported.")
         st.info("This dashboard requires the following constants to be defined: `MARKET_CAP`, `VOLUME`, `ACTIVE_WALLETS`")
-        
-        # Show example of what the dashboard would look like
-        st.markdown("---")
-        st.subheader("Dashboard Preview")
-        st.markdown("Once data is connected, you'll be able to:")
-        st.markdown("- 📈 View market cap trends")
-        st.markdown("- 📊 Compare trading volumes")
-        st.markdown("- 👥 Track active users")
+    
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")

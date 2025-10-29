@@ -100,8 +100,6 @@ def render():
 
         # Display selected chart
         if selection == "certificates_issued":
-            st.header("Certificates Issued")
-            st.markdown("Bar chart displaying the monthly certificates issued on-chain.")
             fig = create_certificates_chart(cert_df)
             st.plotly_chart(fig)
             
@@ -110,8 +108,6 @@ def render():
                 st.dataframe(cert_df)
         
         elif selection == "active_users":
-            st.header("Active Addresses")
-            st.markdown("Bar chart showing the number of users for on-chain certificates.")
             fig = create_mau_chart(addr_df)
             st.plotly_chart(fig)
             
@@ -126,14 +122,6 @@ def render():
         # If fetch_data is not defined, show a placeholder
         st.error("⚠️ Data fetching function not found. Please ensure `fetch_data` is imported.")
         st.info("This dashboard requires the following constants to be defined: `MARKET_CAP`, `VOLUME`, `ACTIVE_WALLETS`")
-        
-        # Show example of what the dashboard would look like
-        st.markdown("---")
-        st.subheader("Dashboard Preview")
-        st.markdown("Once data is connected, you'll be able to:")
-        st.markdown("- 📈 View market cap trends")
-        st.markdown("- 📊 Compare trading volumes")
-        st.markdown("- 👥 Track active users")
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")

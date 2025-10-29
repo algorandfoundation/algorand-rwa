@@ -101,7 +101,7 @@ def render():
 
     # Add description based on selection
     chart_descriptions = {
-        "payments": "Market Cap shows the evolution of the value  of all tokenized properties on Algorand.",
+        "payments": "The number of monthly micropayments on Algorand.",
         "monthly_volume_micro": "The sum of monthly tokenized properties.",
         "mau_micropayments": "Monthly number of unique wallets that have sent an on-chain transaction."
     }
@@ -140,8 +140,6 @@ def render():
 
         # Display selected chart
         if selection == "payments":
-            st.header("Monthly Payments")
-            st.markdown("Stacked bar chart to dispplay the different micropayments on Algorand.")
             fig = create_payments_chart(monthly_tx)
             st.plotly_chart(fig)
             
@@ -150,8 +148,6 @@ def render():
                 st.dataframe(monthly_tx, width='stretch')
         
         elif selection == "monthly_volume_micro":
-            st.header("Monthly Volume transferred")
-            st.markdown("Stacked bar chart showing the monthly volume on micropayments.")
             fig = create_volume_chart(monthly_vol)
             st.plotly_chart(fig)
             
@@ -160,8 +156,6 @@ def render():
                 st.dataframe(mau_df, width='stretch')
         
         elif selection == "mau_micropayments":
-            st.header("Active Addresses")
-            st.markdown("Bar chart showing the number of active wallets on Lofty.")
             fig = create_addresses_chart(mau_df)
             st.plotly_chart(fig)
             
@@ -177,13 +171,6 @@ def render():
         st.error("⚠️ Data fetching function not found. Please ensure `fetch_data` is imported.")
         st.info("This dashboard requires the following constants to be defined: `MARKET_CAP`, `VOLUME`, `ACTIVE_WALLETS`")
         
-        # Show example of what the dashboard would look like
-        st.markdown("---")
-        st.subheader("Dashboard Preview")
-        st.markdown("Once data is connected, you'll be able to:")
-        st.markdown("- 📈 View market cap trends")
-        st.markdown("- 📊 Compare trading volumes")
-        st.markdown("- 👥 Track active users")
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")

@@ -109,7 +109,7 @@ def render():
 
     # Add description based on selection
     chart_descriptions = {
-        "market_cap_commodities": "Market Caps shows the scale and power law distribution between all commodities issuers.",
+        "market_cap_commodities": "The Market Cap by commodities on Algorand.",
         "volume_commodities": "The sum of monthly transferred volumes by commodity.",
         "mau_commodities": "Monthly number of wallets that have sent an on-chain transaction."
     }
@@ -146,8 +146,6 @@ def render():
 
         # Display selected chart
         if selection == "market_cap_commodities":
-            st.header("Commodities Market Cap")
-            st.markdown("Area chart showing the market capitalization trends of various commodities.")
             fig = create_mcap_chart(mcap_df)
             st.plotly_chart(fig)
             
@@ -156,8 +154,6 @@ def render():
                 st.dataframe(mcap_df)
         
         elif selection == "volume_commodities":
-            st.header("Commodities Transfer Volume")
-            st.markdown("Bar chart comparing trading volumes across different commodities.")
             fig = create_volume_chart(monthly_vol)
             st.plotly_chart(fig)
             
@@ -166,8 +162,6 @@ def render():
                 st.dataframe(vol_df)
         
         elif selection == "mau_commodities":
-            st.header("Active Addresses")
-            st.markdown("Bar chart showing the number of active wallets for each commodities.")
             fig = create_mau_chart(mau_df)
             st.plotly_chart(fig)
             
@@ -182,14 +176,6 @@ def render():
         # If fetch_data is not defined, show a placeholder
         st.error("⚠️ Data fetching function not found. Please ensure `fetch_data` is imported.")
         st.info("This dashboard requires the following constants to be defined: `MARKET_CAP`, `VOLUME`, `ACTIVE_WALLETS`")
-        
-        # Show example of what the dashboard would look like
-        st.markdown("---")
-        st.subheader("Dashboard Preview")
-        st.markdown("Once data is connected, you'll be able to:")
-        st.markdown("- 📈 View market cap trends")
-        st.markdown("- 📊 Compare trading volumes")
-        st.markdown("- 👥 Track active users")
 
     except Exception as e:
         st.error(f"An error occurred: {str(e)}")

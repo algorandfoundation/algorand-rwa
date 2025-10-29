@@ -6,14 +6,16 @@ from content.commodities import commodities
 from content.private_credit import private_credit
 from content.cerificates import certificates
 from content.loyalty import loyalty
+from content.overview import overview
+from content.faq import faq 
+import base64
 
 import time
 import subprocess
 
 # Page configuration
 st.set_page_config(
-    page_title="Asset Tokenization Dashboard",
-    page_icon="🔗",
+    page_title="Algorand RWA Dashboard",
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -130,13 +132,27 @@ st.markdown("""
     
     /* Metrics styling */
     [data-testid="stMetricValue"] {
-        color: #17cac6;
+        color: #ffffff;
     }
     
     /* Divider color */
     hr {
         border-color: #17cac6;
     }
+        [data-testid="stMetricDelta"] svg {
+        display: none;
+    }
+    [data-testid="stMetricDelta"] {
+        font-weight: 600;
+    }
+    /* Positive delta - green */
+    [data-testid="stMetricDelta"][data-trend="positive"] {
+        color: #01DC94 !important;
+    }
+    /* Negative delta - red */
+    [data-testid="stMetricDelta"][data-trend="negative"] {
+        color: #FF2C2C !important;
+    }   
     </style>
 """, unsafe_allow_html=True)
 
@@ -153,7 +169,7 @@ with col1:
 
 with col2:
     # Create tabs
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
         "Overview",
         "Micropayments",
         "Stablecoins",
@@ -161,7 +177,8 @@ with col2:
         "Private Credit",
         "Real Estate",
         "Certificates",
-        "Loyalty"
+        "Loyalty",
+        "FAQ"
     ])
 
 with col3:
@@ -177,7 +194,7 @@ with col3:
 # Render each tab
 with tab1:
     st.header("Overview")
-    #overview.render()
+    overview.render()
 
 with tab2:
     st.header("Micropayments")
@@ -208,3 +225,7 @@ with tab7:
 with tab8:
     st.header("Loyalty")
     loyalty.render()
+
+with tab9:
+    faq.render()
+
