@@ -3,7 +3,7 @@ name: dbt Run
 on:
   # Run on schedule (daily at 8 AM UTC)
   schedule:
-    - cron: '5 * * * *'
+    - cron: '0 */12 * * *'
   
   # Allow manual trigger
   workflow_dispatch:
