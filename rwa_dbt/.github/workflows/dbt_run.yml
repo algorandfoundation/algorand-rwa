@@ -1,0 +1,78 @@
+name: dbt Run
+
+on:
+  # Run on schedule (daily at 8 AM UTC)
+  schedule:
+    - cron: '5 * * * *'
+  
+  # Allow manual trigger
+  workflow_dispatch:
+  
+  # Run on push to main (optional)
+  push:
+    branches:
+      - main
+    paths:
+      - 'models/**'
+      - 'dbt_project.yml'
+
+jobs:
+  dbt_run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.13.2'
+          cache: 'pip'
+      
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+      
+      - name: Create profiles.yml
+        run: |
+          mkdir -p ~/.dbt
+          cat > ~/.dbt/profiles.yml <<EOF
+          rwa_dbt:
+            outputs:
+              prod:
+                type: clickhouse
+                host: ${{ secrets.CLICKHOUSE_HOST }}
+                port: ${{ secrets.CLICKHOUSE_PORT }}
+                user: ${{ secrets.CLICKHOUSE_USER }}
+                password: ${{ secrets.CLICKHOUSE_PASSWORD }}
+                database: ${{ secrets.CLICKHOUSE_DATABASE }}
+                schema: ${{ secrets.CLICKHOUSE_SCHEMA }}
+                secure: true
+            target: dev
+          EOF
+      
+      - name: Install dbt packages
+        run: dbt deps
+      
+      - name: Run dbt debug
+        run: dbt debug
+      
+      - name: Run dbt models
+        run: dbt run
+      
+      - name: Run dbt tests
+        run: dbt test
+      
+      - name: Generate dbt docs
+        run: |
+          dbt docs generate
+      
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v3
+        with:
+          name: dbt-artifacts
+          path: |
+            target/
+            logs/

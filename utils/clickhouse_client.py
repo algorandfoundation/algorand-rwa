@@ -5,7 +5,6 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-"""
 DB_HOST = os.getenv("DB_HOST")
 DB_PORT = os.getenv("DB_PORT")
 DB_USER = os.getenv("DB_USER")
@@ -17,6 +16,7 @@ DB_PORT = st.secrets.db_credentials["DB_PORT"]
 DB_USER = st.secrets.db_credentials["DB_USER"]
 DB_PASS = st.secrets.db_credentials["DB_PASS"]
 
+"""
 
 def get_client():
     client = clickhouse_connect.get_client(
