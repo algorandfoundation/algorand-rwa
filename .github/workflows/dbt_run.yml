@@ -13,8 +13,8 @@ on:
     branches:
       - main
     paths:
-      - 'models/**'
-      - 'dbt_project.yml'
+      - 'rwa_dbt/models/**'
+      - 'rwa_dbt/dbt_project.yml'
 
 jobs:
   dbt_run:
