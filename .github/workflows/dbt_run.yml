@@ -49,7 +49,7 @@ jobs:
                 database: ${{ secrets.CLICKHOUSE_DATABASE }}
                 schema: ${{ secrets.CLICKHOUSE_SCHEMA }}
                 secure: true
-            target: prod
+            target: dev
           EOF
       
       - name: Run dbt models
