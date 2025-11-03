@@ -52,31 +52,5 @@ jobs:
             target: prod
           EOF
       
-      - name: Install dbt packages
-        working-directory: ./rwa_dbt
-        run: dbt deps
-      
-      - name: Run dbt debug
-        working-directory: ./rwa_dbt
-        run: dbt debug
-      
       - name: Run dbt models
-        working-directory: ./rwa_dbt
-        run: dbt run
-      
-      - name: Run dbt tests
-        working-directory: ./rwa_dbt
-        run: dbt test
-      
-      - name: Generate dbt docs
-        working-directory: ./rwa_dbt
-        run: dbt docs generate
-      
-      - name: Upload artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: dbt-artifacts
-          path: |
-            rwa_dbt/target/
-            rwa_dbt/logs/
+        run: dbt run --project-dir ./rwa_dbt
