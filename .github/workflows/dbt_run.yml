@@ -39,8 +39,9 @@ jobs:
           mkdir -p ~/.dbt
           cat > ~/.dbt/profiles.yml <<EOF
           rwa_dbt:
+            target: dev
             outputs:
-              prod:
+              dev:
                 type: clickhouse
                 host: ${{ secrets.CLICKHOUSE_HOST }}
                 port: ${{ secrets.CLICKHOUSE_PORT }}
@@ -48,8 +49,8 @@ jobs:
                 password: ${{ secrets.CLICKHOUSE_PASSWORD }}
                 database: ${{ secrets.CLICKHOUSE_DATABASE }}
                 schema: ${{ secrets.CLICKHOUSE_SCHEMA }}
-                secure: true
-            target: dev
+                secure: false
+                verify: false
           EOF
       
       - name: Run dbt models
