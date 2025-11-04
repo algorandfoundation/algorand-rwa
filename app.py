@@ -157,7 +157,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # Main title (centered, no button)
-st.markdown("<h1 style='text-align: center; color: #ffffff;'>Algorand - Real World Assets Dashboard (preAlpha)</h1>", unsafe_allow_html=True)
+st.markdown("<h1 style='text-align: center; color: #ffffff;'>Algorand - Real World Assets Dashboard (Beta)</h1>", unsafe_allow_html=True)
 
 st.markdown("---")
 
