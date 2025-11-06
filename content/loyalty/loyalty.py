@@ -38,8 +38,8 @@ def render():
     # Calculate metrics
     rows, cols = fetch_data(ADDRESSES)
     addr_df = pd.DataFrame(rows, columns=cols)
-    addr = addr_df.iloc[-1]['cumulative_unique_users']
-    addr_delta = addr/addr_df.iloc[-2]['cumulative_unique_users'] - 1
+    addr = addr_df.iloc[-1]['monthly_unique_users']
+    addr_delta = addr/addr_df.iloc[-2]['monthly_unique_users'] - 1
 
     # First row with 4 columns
     col1, col2 = st.columns(2)
