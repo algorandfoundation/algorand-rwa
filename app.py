@@ -7,11 +7,16 @@ from content.private_credit import private_credit
 from content.cerificates import certificates
 from content.loyalty import loyalty
 from content.overview import overview
+from content.card import card
 from content.faq import faq 
 import base64
 
 import time
 import subprocess
+from streamlit_autorefresh import st_autorefresh
+
+# Rerun app every 60 minutes
+st_autorefresh(interval=60 * 60 * 1000, key="data_refresh")
 
 # Page configuration
 st.set_page_config(
@@ -169,9 +174,10 @@ with col1:
 
 with col2:
     # Create tabs
-    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9 = st.tabs([
+    tab1, tab2, tab3, tab4, tab5, tab6, tab7, tab8, tab9, tab10 = st.tabs([
         "Overview",
         "Micropayments",
+        "Pera Wallet Card",
         "Stablecoins",
         "Commodities",
         "Private Credit",
@@ -194,29 +200,33 @@ with tab2:
     micropayments.render()
 
 with tab3:
+    st.header("Pera Wallet Card")
+    card.render()
+
+with tab4:
     st.header("Stablecoins")
     stablecoins.render()
 
-with tab4:
+with tab5:
     st.header("Commodities")
     commodities.render()
 
-with tab5:
+with tab6:
     st.header("Private Credit")
     private_credit.render()
 
-with tab6:
+with tab7:
     st.header("Real Estate")
     real_estate.render()
 
-with tab7:
+with tab8:
     st.header("Certificates")
     certificates.render()
 
-with tab8:
+with tab9:
     st.header("Loyalty")
     loyalty.render()
 
-with tab9:
+with tab10:
     faq.render()
 

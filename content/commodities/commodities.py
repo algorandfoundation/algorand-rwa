@@ -25,11 +25,12 @@ def format_large_number(num):
     else:
         return f"{num:.0f}"
 
-@st.cache_data(ttl=3600)  # Auto-refresh cache every hour
+@st.cache_data(ttl=3600, show_spinner=False)
 def fetch_data(query):
     """Fetch data with automatic 1-hour refresh"""
-    return run_query(query)
-
+    with st.spinner("Retrieving fresh data..."):
+        data = run_query(query)
+    return data
 
 def render():
     # Calculate metrics

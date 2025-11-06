@@ -23,10 +23,12 @@ def format_large_number(num):
     else:
         return f"${num:.0f}"
 
-@st.cache_data(ttl=3600)  # Auto-refresh cache every hour
+@st.cache_data(ttl=3600, show_spinner=False)
 def fetch_data(coin):
     """Fetch data with automatic 1-hour refresh"""
-    return get_tvl_data(coin)
+    with st.spinner("Retrieving fresh data..."):
+        data = get_tvl_data(coin)
+    return data
 
 
 def render():
