@@ -38,7 +38,7 @@ def render():
     rows, cols = fetch_data(TRANSACTIONS)
     tx_df = pd.DataFrame(rows, columns=cols)
     last30d_tx = tx_df.iloc[-1]['transactions']
-    tx_delta = last30d_tx/tx_df.iloc[-2]['transactions']
+    tx_delta = last30d_tx/tx_df.iloc[-2]['transactions'] - 1
 
     rows, cols = fetch_data(ACTIVE_WALLETS)
     mau_df = pd.DataFrame(rows, columns=cols)
