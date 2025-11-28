@@ -22,152 +22,85 @@ st_autorefresh(interval=60 * 60 * 1000, key="data_refresh")
 st.set_page_config(
     page_title="Algorand RWA Dashboard",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="auto"
 )
 
 # Custom CSS to enhance the theme from config.toml
 st.markdown("""
-    <style>
-    /* Import Google Fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-    
-    /* Apply font globally */
-    html, body, [class*="css"] {
-        font-family: 'Inter', sans-serif;
-    }
-    /* Tab/Pills styling to match your cyan theme */
+<style>
+/* Make tab container horizontally scrollable on small screens */
+.stTabs [data-baseweb="tab-list"] {
+    display: flex;
+    flex-wrap: wrap; /* allow wrapping */
+    overflow-x: auto; /* allow horizontal scroll if needed */
+    -webkit-overflow-scrolling: touch;
+    justify-content: center;
+}
+
+/* Prevent hidden overflow on mobile */
+.stTabs [data-baseweb="tab"] {
+    flex: 1 1 auto;
+    min-width: fit-content;
+    white-space: nowrap;
+}
+
+/* Make sure the scrollbar is visible on small screens */
+@media (max-width: 768px) {
     .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-        justify-content: center;
+        justify-content: flex-start;
+        padding: 0 5px;
     }
-    
     .stTabs [data-baseweb="tab"] {
-        background-color: #001324;
-        color: #17cac6;
-        border: 1px solid #001324;
-        border-radius: 15px;
-        font-size: 10px;
-        padding: 10px 20px;
+        font-size: 10px !important;
+        padding: 6px 10px !important;
     }
-    
-    .stTabs [data-baseweb="tab"]:hover {
-        background-color: #17CAC6;
-        color: #001324;
+    h1, h2, h3 {
+        font-size: 90%;
+        text-align: center;
     }
-    
-    .stTabs [aria-selected="true"] {
-        background-color: #17cac6 !important;
-        color: #001324 !important;
-        font-weight: bold;
-    }
-    
-    /* Button styling */
-    .stButton > button {
-        background-color: #001324;
-        color: #17cac6;
-        border: 1px solid #17cac6;
-        border-radius: 15px;
-        font-weight: bold;
-        padding: 10px 20px;
-    }
-    
-    .stButton > button:hover {
-        background-color: #17cac6;
-        color: #001324;
-    }
-    
-/* Pills styling - Inactive state */
-    button[data-testid="stBaseButton-pills"] {
-        background-color: #001324 !important;
-        color: #17cac6 !important;
-        border: 1px solid #001324 !important;
-        border-radius: 15px !important;
-        padding: 8px 16px !important;
-        margin: 2px !important;
-    }
-    
-    button[data-testid="stBaseButton-pills"] p {
-        color: #17cac6 !important;
-        font-size: 14px !important;
-    }
-    
-    /* Pills hover - Inactive state */
-    button[data-testid="stBaseButton-pills"]:hover {
-        background-color: #17CAC6 !important;
-        border: 1px solid #17CAC6 !important;
-    }
-    
-    button[data-testid="stBaseButton-pills"]:hover p {
-        color: #001324 !important;
-    }
-    
-    /* Pills styling - Active/Selected state */
-    button[data-testid="stBaseButton-pillsActive"] {
-        background-color: #17cac6 !important;
-        color: #001324 !important;
-        border: 1px solid #17cac6 !important;
-        border-radius: 15px !important;
-        padding: 8px 16px !important;
-        margin: 2px !important;
-    }
-    
-    button[data-testid="stBaseButton-pillsActive"] p {
-        color: #001324 !important;
-        font-size: 12px !important;
-    }
-    
-    /* Pills hover - Active state (keep same styling) */
-    button[data-testid="stBaseButton-pillsActive"]:hover {
-        background-color: #17cac6 !important;
-        border: 1px solid #17cac6 !important;
-    }
-    
-    button[data-testid="stBaseButton-pillsActive"]:hover p {
-        color: #001324 !important;
-    }
-    
-    /* Header styling - keep white */
-    h1 {
-        color: #ffffff !important;
-    }
-    
-    h2, h3 {
-        color: #ffffff !important;
-    }
-    
-    /* Metrics styling */
-    [data-testid="stMetricValue"] {
-        color: #ffffff;
-    }
-    
-    /* Divider color */
-    hr {
-        border-color: #17cac6;
-    }
-        [data-testid="stMetricDelta"] svg {
-        display: none;
-    }
-    [data-testid="stMetricDelta"] {
-        font-weight: 600;
-    }
-    /* Positive delta - green */
-    [data-testid="stMetricDelta"][data-trend="positive"] {
-        color: #01DC94 !important;
-    }
-    /* Negative delta - red */
-    [data-testid="stMetricDelta"][data-trend="negative"] {
-        color: #FF2C2C !important;
-    }   
-    </style>
+}
+</style>
 """, unsafe_allow_html=True)
+
 
 # Main title (centered, no button)
 st.markdown("<h1 style='text-align: center; color: #ffffff;'>Algorand - Real World Assets Dashboard (Beta)</h1>", unsafe_allow_html=True)
 
 st.markdown("---")
 
-# Tabs with refresh button in the same row
-col1, col2, col3 = st.columns([1, 6, 1])
+st.markdown("<div class='responsive-tabs'>", unsafe_allow_html=True)
+col1, col2, col3 = st.columns([0.5, 7, 0.5])
+st.markdown("</div>", unsafe_allow_html=True)
+
+st.markdown("""
+<style>
+@media (max-width: 768px) {
+    .responsive-tabs .block-container {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+@media (max-width: 600px) {
+    html, body, [class*="css"] {
+        font-size: 14px;
+    }
+    .stButton > button {
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+    }
+    h1 {
+        font-size: 18px !important;
+    }
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 with col1:
     st.write("")  # Spacer

@@ -7,3 +7,5 @@ dbt-clickhouse>=1.7.0
 dbt-core>=1.7.0
 yfinance
 streamlit-autorefresh
+fastapi
+uvicorn[standard]

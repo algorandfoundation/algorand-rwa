@@ -33,8 +33,8 @@ def render():
     # Calculate metrics
     rows, cols = fetch_data(TRANSACTIONS)
     tx_df = pd.DataFrame(rows, columns=cols)
-    tx = tx_df.iloc[-1]['total_txn']
-    tx_delta = tx/tx_df.iloc[-2]['total_txn'] - 1
+    tx = tx_df.iloc[-1]['txn']
+    tx_delta = tx/tx_df.iloc[-2]['txn'] - 1
 
     # Calculate metrics
     rows, cols = fetch_data(ADDRESSES)
