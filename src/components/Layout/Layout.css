@@ -1,0 +1,85 @@
+.layout {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.header {
+    padding: var(--spacing-lg) 0;
+    border-bottom: 1px solid var(--border-subtle);
+    background-color: rgba(5, 5, 5, 0.8);
+    backdrop-filter: blur(10px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.brand {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    background: var(--accent-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    width: fit-content;
+}
+
+.nav {
+    display: flex;
+    gap: var(--spacing-sm);
+    overflow-x: auto;
+    padding-bottom: 4px;
+    /* Space for scrollbar if needed */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+.nav::-webkit-scrollbar {
+    display: none;
+    /* Chrome/Safari */
+}
+
+.nav-link {
+    color: var(--text-tertiary);
+    text-decoration: none;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: 99px;
+    font-weight: 500;
+    font-size: var(--font-size-sm);
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.nav-link:hover {
+    color: var(--text-primary);
+    background-color: var(--bg-card-hover);
+}
+
+.nav-link.active {
+    color: var(--bg-void);
+    background: var(--accent-gradient);
+    font-weight: 600;
+}
+
+.main-content {
+    flex: 1;
+    padding: var(--spacing-xl) 0;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
