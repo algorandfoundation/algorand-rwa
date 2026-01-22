@@ -23,3 +23,4 @@ WHERE type_ext = 'asa_transfer'
   AND toDate(realtime) >= date_sub(day, 7, today())
 {% endif %}
 GROUP BY date, asset_id, asset
+
