@@ -183,9 +183,9 @@ const Micropayments = () => {
 
   // Asset type colors
   const assetColors = {
-    algo: '#2d2df1',
-    stable: '#17cac6',
-    hafn: '#ffffffff'
+    algo: 'var(--asset-algo)',
+    stable: 'var(--asset-stable)',
+    hafn: 'var(--asset-hafn)'
   };
 
   const getChartConfig = () => {
