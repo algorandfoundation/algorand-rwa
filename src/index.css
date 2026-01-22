@@ -1,0 +1,149 @@
+:root {
+  /* Base palette tokens (do not use directly in components) */
+  --light-bg: #f5f7fb;
+  --dark-bg: #001324;
+
+  --accent-primary-light: #2d2df1;
+  --accent-secondary-light: #bfbff9;
+
+  /* Algorand-ish Green/Teal */
+  --accent-primary-dark: #17cac6;
+  --accent-secondary-dark: #b9efee;
+
+  /* Status Colors (shared) */
+  --success: #22c55e;
+  --error: #ef4444;
+
+  /* Spacing */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  /* Typography */
+  --font-family-base: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-size-sm: 0.875rem;
+  --font-size-base: 1rem;
+  --font-size-lg: 1.125rem;
+  --font-size-xl: 1.5rem;
+  --font-size-2xl: 2rem;
+  --font-size-3xl: 2.5rem;
+}
+
+/* Dark theme (default) */
+:root[data-theme='dark'] {
+  /* Surfaces */
+  --bg-void: #001324;
+  --bg-card: #334250;
+  --bg-card-hover: #b9efee;
+  --bg-surface: #334250;
+
+  /* Text */
+  --text-primary: #17c1c6;
+  --text-secondary: #ffffff;
+  --text-tertiary: #ffffff;
+
+  /* Accents */
+  --accent-primary: var(--accent-primary-dark);
+  --accent-secondary: var(--accent-secondary-dark);
+  --accent-gradient: linear-gradient(135deg, #17cac6, #e7faf9);
+
+  /* Borders */
+  --border-subtle: rgba(148, 163, 184, 0.35);
+  --border-highlight: rgba(148, 163, 184, 0.65);
+}
+
+/* Light theme */
+:root[data-theme='light'] {
+  /* Surfaces */
+  --bg-void: #ffffff;
+  --bg-card: #f5f7fb;
+  --bg-card-hover: #e3e7f2;
+  --bg-surface: #f0f4ff;
+
+  /* Text */
+  --text-primary: #2d2df1;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+
+  /* Accents */
+  --accent-primary: var(--accent-primary-light);
+  --accent-secondary: var(--accent-secondary-light);
+  --accent-gradient: linear-gradient(135deg, #2d2df1, #e9e9fd);
+
+  /* Borders */
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-highlight: rgba(15, 23, 42, 0.18);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-void);
+  color: var(--text-primary);
+  font-family: var(--font-family-base);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-void);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--bg-surface);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-secondary);
+}
+
+/* Utilities */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  width: 100%;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin: 0;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+
+/* Chart Legend Styling */
+.recharts-legend-item-text {
+  color: var(--text-secondary) !important;
+}
+
+.recharts-legend-wrapper {
+  color: var(--text-secondary) !important;
+}
