@@ -47,7 +47,19 @@
   /* Accents */
   --accent-primary: var(--accent-primary-dark);
   --accent-secondary: var(--accent-secondary-dark);
-  --accent-gradient: linear-gradient(135deg, #17cac6, #e7faf9);
+  --accent-gradient: linear-gradient(135deg, #17cac6, #e7faf9); 
+
+  /* Asset colors */
+  --asset-algo: #2d2df1;
+  --asset-hafn: #ffffffff;
+  --asset-stable: #17cac6;
+  --asset-stable-usdc: #2d2df1;
+  --asset-stable-usdt: #17cac6;
+  --asset-stable-xusd: #bfbff9;
+  --asset-stable-gousd: #ffffffff;
+  --asset-gold1: #2d2df1;
+  --asset-silver: #17cac6;
+  --asset-gold2: #ffffffff;
 
   /* Borders */
   --border-subtle: rgba(148, 163, 184, 0.35);
@@ -71,6 +83,18 @@
   --accent-primary: var(--accent-primary-light);
   --accent-secondary: var(--accent-secondary-light);
   --accent-gradient: linear-gradient(135deg, #2d2df1, #e9e9fd);
+
+    /* Asset colors */
+    --asset-algo: #2d2df1;
+    --asset-hafn: #bfbff9;
+    --asset-stable: #17cac6;
+    --asset-stable-usdc: #2d2df1;
+    --asset-stable-usdt: #17cac6;
+    --asset-stable-xusd: #bfbff9;
+    --asset-stable-gousd: #001324;
+    --asset-gold1: #2d2df1;
+    --asset-silver: #17cac6;
+    --asset-gold2: #bfbff9;
 
   /* Borders */
   --border-subtle: rgba(15, 23, 42, 0.08);

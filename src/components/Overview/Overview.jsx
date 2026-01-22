@@ -331,9 +331,9 @@ const Overview = () => {
                                     type="monotone"
                                     dataKey="cumulative"
                                     name={chartConfig.cumulativeName}
-                                    stroke={'#17cac6'}
+                                    stroke={'var(--accent-secondary)'}
                                     strokeWidth={3}
-                                    dot={{ r: 4, fill: 'var(--bg-card)', stroke: '#17cac6', strokeWidth: 2 }}
+                                    dot={{ r: 4, fill: 'var(--bg-card)', stroke: 'var(--accent-primary)', strokeWidth: 2 }}
                                     activeDot={{ r: 6 }}
                                 />
                                 <Legend wrapperStyle={{ paddingTop: '20px', color: 'var(--text-secondary)' }} />

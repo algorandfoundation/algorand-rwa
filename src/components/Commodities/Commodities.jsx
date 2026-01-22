@@ -207,9 +207,9 @@ const Commodities = () => {
 
   // Asset type colors
   const assetColors = {
-    gold$: '#2d2df1',
-    silver$: '#17cac6',
-    gold: '#ffffffff'
+    gold$: 'var(--asset-gold1)',
+    silver$: 'var(--asset-silver)',
+    gold: 'var(--asset-gold2)'
   };
   const getChartConfig = () => {
     switch (activeChart) {
