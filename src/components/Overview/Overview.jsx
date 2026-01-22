@@ -255,7 +255,7 @@ const Overview = () => {
                         <ResponsiveContainer width="100%" height={400}>
                             <ComposedChart data={currentChartData}>
                                 <defs>
-                                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                                    <linearGradient id={`barGradient-${activeChart}`} x1="0" y1="0" x2="0" y2="1">
                                         <stop offset="0%" stopColor={activeColor} stopOpacity={0.8} />
                                         <stop offset="95%" stopColor={activeColor} stopOpacity={0.3} />
                                     </linearGradient>
@@ -267,7 +267,14 @@ const Overview = () => {
                                     tickLine={false}
                                     axisLine={false}
                                     tickFormatter={(val) => val.slice(0, 7)}
-                                    label={{ value: 'Date', position: 'insideBottom', offset: -15 }}
+                                    label={{ 
+                                        value: 'Date', 
+                                        position: 'insideBottom', 
+                                        offset: -15, 
+                                        style: { 
+                                          fill: 'var(--text-secondary)', 
+                                          textAnchor: 'middle' 
+                                        } }}
                                 />
                                 <YAxis
                                     yAxisId="left"
@@ -311,12 +318,11 @@ const Overview = () => {
                                         ];
                                     }}
                                 />
-                                <Legend wrapperStyle={{ paddingTop: '20px', color: '#ffffff' }} />
                                 <Bar
                                     yAxisId="left"
                                     dataKey="value"
                                     name={chartConfig.monthlyName}
-                                    fill="url(#barGradient)"
+                                    fill={`url(#barGradient-${activeChart})`}
                                     radius={[4, 4, 0, 0]}
                                     maxBarSize={50}
                                 />
@@ -330,6 +336,7 @@ const Overview = () => {
                                     dot={{ r: 4, fill: 'var(--bg-card)', stroke: '#17cac6', strokeWidth: 2 }}
                                     activeDot={{ r: 6 }}
                                 />
+                                <Legend wrapperStyle={{ paddingTop: '20px', color: 'var(--text-secondary)' }} />
                             </ComposedChart>
                         </ResponsiveContainer>
                     )}

@@ -1,8 +1,9 @@
 {{ config(
     materialized='incremental',
     unique_key=['date', 'asset_id'],
-    incremental_strategy='append'
+    incremental_strategy='delete+insert'
 ) }}
+
 
 -- Compute daily transfer volume per stablecoin
 
@@ -19,7 +20,6 @@ SELECT
 FROM {{ ref('stg_stablecoin_txn') }}
 WHERE type_ext = 'asa_transfer'
 {% if is_incremental() %}
-  AND toDate(realtime) > (SELECT max(date) FROM {{ this }})
+  AND toDate(realtime) >= date_sub(day, 7, today())
 {% endif %}
 GROUP BY date, asset_id, asset
-ORDER BY date, asset_id

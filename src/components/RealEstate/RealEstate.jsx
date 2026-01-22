@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import {
   ComposedChart,
   Bar,
+  Area,
   Line,
   XAxis,
   YAxis,
@@ -101,18 +102,30 @@ const RealEstate = () => {
 
   const getKpiData = (arr, type) => {
     if (type === 'properties') {
-      // Properties is just a single value, no array with dates
       if (!arr || arr.length === 0) return { value: 0, delta: null };
-      return { value: arr[0].total, delta: null };
+      return { value: arr[arr.length - 1].total, delta: null };
     }
 
     if (!arr || arr.length === 0) return { value: 0, delta: null };
 
     const lastIndex = arr.length - 1;
     const current = arr[lastIndex].total;
-    const previous = lastIndex > 0 ? arr[lastIndex - 1].total : null;
 
-    const delta = previous ? (current / previous) - 1 : null;
+    let previous = null;
+    let delta = null;
+
+    if (type === 'market_cap') {
+      // For market cap, compare with index-30 (30 periods ago)
+      const compareIndex = lastIndex - 30;
+      if (compareIndex >= 0) {
+        previous = arr[compareIndex].total;
+        delta = previous ? (current / previous) - 1 : null;
+      }
+    } else {
+      // For other metrics, compare with previous period
+      previous = lastIndex > 0 ? arr[lastIndex - 1].total : null;
+      delta = previous ? (current / previous) - 1 : null;
+    }
 
     return { value: current, delta };
   };
@@ -170,7 +183,7 @@ const RealEstate = () => {
       label: 'Monthly Active Addresses',
       value: formatCompactNumber(addrKpi.value),
       delta: addrKpi.delta,
-      color: 'var(--accent-secondary)',
+      color: 'var(--accent-primary)',
       hasChart: true
     },
     {
@@ -178,7 +191,7 @@ const RealEstate = () => {
       label: 'Monthly Volume',
       value: `$${formatCompactNumber(volKpi.value)}`,
       delta: volKpi.delta,
-      color: 'var(--accent-purple)',
+      color: 'var(--accent-primary)',
       hasChart: true
     },
     {
@@ -186,7 +199,7 @@ const RealEstate = () => {
       label: 'Total Properties',
       value: formatCompactNumber(propKpi.value),
       delta: null,
-      color: 'var(--accent-tertiary)',
+      color: 'var(--accent-primary)',
       hasChart: false
     }
   ];
@@ -290,7 +303,7 @@ const RealEstate = () => {
 
       <section className="chart-section">
         <div className="chart-header">
-          <h3>Performance Trends{activeChart === 'addresses' ? '' : ' by Asset Type'}</h3>
+          <h3>Performance Trends</h3>
           <div className="chart-pills">
             {chartOptions.map((opt) => (
               <button
@@ -313,10 +326,16 @@ const RealEstate = () => {
             <ResponsiveContainer width="100%" height={400}>
               <ComposedChart data={currentChartData}>
                 <defs>
-                  {!chartConfig.showStacked && (
-                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                  {activeChart !== 'market_cap' && (
+                    <linearGradient id={`barGradient-${activeChart}`} x1="0" y1="0" x2="0" y2="1">
                       <stop offset="0%" stopColor={activeColor} stopOpacity={0.8} />
                       <stop offset="95%" stopColor={activeColor} stopOpacity={0.3} />
+                    </linearGradient>
+                  )}
+                  {activeChart === 'market_cap' && (
+                    <linearGradient id={`areaGradient-${activeChart}`} x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stopColor={activeColor} stopOpacity={0.4} />
+                      <stop offset="100%" stopColor={activeColor} stopOpacity={0.05} />
                     </linearGradient>
                   )}
                 </defs>
@@ -327,7 +346,14 @@ const RealEstate = () => {
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(val) => val.slice(0, 7)}
-                  label={{ value: 'Date', position: 'insideBottom', offset: -15 }}
+                  label={{ 
+                    value: 'Date', 
+                    position: 'insideBottom', 
+                    offset: -15, 
+                    style: { 
+                      fill: 'var(--text-secondary)', 
+                      textAnchor: 'middle' 
+                    } }}
                 />
                 <YAxis
                   yAxisId="left"
@@ -373,25 +399,40 @@ const RealEstate = () => {
                     ];
                   }}
                 />
-                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                <Legend wrapperStyle={{ paddingTop: '20px', color: 'var(--text-secondary)' }} />
 
-                {/* Bars - stacked or single */}
-                {chartConfig.bars.map((bar, index) => (
-                  <Bar
-                    key={bar.key}
-                    yAxisId="left"
-                    dataKey={bar.key}
-                    name={bar.name}
-                    fill={chartConfig.showStacked ? bar.color : 'url(#barGradient)'}
-                    stackId={chartConfig.showStacked ? 'stack' : undefined}
-                    radius={
-                      chartConfig.showStacked
-                        ? (index === chartConfig.bars.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0])
-                        : [4, 4, 0, 0]
-                    }
-                    maxBarSize={50}
-                  />
-                ))}
+                {/* Area chart for market_cap, Bars for others */}
+                {activeChart === 'market_cap' ? (
+                  chartConfig.bars.map((bar, index) => (
+                    <Area
+                      key={bar.key}
+                      yAxisId="left"
+                      type="monotone"
+                      dataKey={bar.key}
+                      name={bar.name}
+                      fill={`url(#areaGradient-${activeChart})`}
+                      stroke={activeColor}
+                      strokeWidth={2}
+                    />
+                  ))
+                ) : (
+                  chartConfig.bars.map((bar, index) => (
+                    <Bar
+                      key={bar.key}
+                      yAxisId="left"
+                      dataKey={bar.key}
+                      name={bar.name}
+                      fill={chartConfig.bars.length > 1 && chartConfig.showStacked ? bar.color : `url(#barGradient-${activeChart})`}
+                      stackId={chartConfig.showStacked && chartConfig.bars.length > 1 ? 'stack' : undefined}
+                      radius={
+                        chartConfig.showStacked && chartConfig.bars.length > 1
+                          ? (index === chartConfig.bars.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0])
+                          : [4, 4, 0, 0]
+                      }
+                      maxBarSize={50}
+                    />
+                  ))
+                )}
               </ComposedChart>
             </ResponsiveContainer>
           )}

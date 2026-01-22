@@ -60,9 +60,12 @@ const Commodities = () => {
                   total: parseInt(cols[1], 10) || 0
                 };
               } else if (type === 'volume') {
-                if (cols.length < 2) return null;
+                if (cols.length < 4) return null;
                 return {
                   date: cols[0],
+                  gold$: parseInt(cols[2], 10) || 0,
+                  silver$: parseInt(cols[3], 10) || 0,
+                  gold: parseInt(cols[4], 10) || 0,
                   total: parseInt(cols[1], 10) || 0
                 };
               } else if (type === 'holders') {
@@ -172,7 +175,7 @@ const Commodities = () => {
       label: 'Monthly Active Addresses',
       value: formatCompactNumber(addrKpi.value),
       delta: addrKpi.delta,
-      color: 'var(--accent-secondary)',
+      color: 'var(--accent-primary)',
       hasChart: true
     },
     {
@@ -180,7 +183,7 @@ const Commodities = () => {
       label: 'Monthly Volume',
       value: `$${formatCompactNumber(volKpi.value)}`,
       delta: volKpi.delta,
-      color: 'var(--accent-purple)',
+      color: 'var(--accent-primary)',
       hasChart: true
     },
     {
@@ -188,7 +191,7 @@ const Commodities = () => {
       label: 'Total Stablecoin Holders',
       value: formatCompactNumber(holderKpi.value),
       delta: null,
-      color: 'var(--accent-tertiary)',
+      color: 'var(--accent-primary)',
       hasChart: false
     }
   ];
@@ -312,12 +315,34 @@ const Commodities = () => {
             <ResponsiveContainer width="100%" height={400}>
               <ComposedChart data={currentChartData}>
                 <defs>
-                  {!chartConfig.showStacked && (
-                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                  {chartConfig.showStacked && chartConfig.bars.length > 1 ? (
+                    // Gradients for stacked bars using assetColors
+                    chartConfig.bars.map((bar) => (
+                      <linearGradient
+                        key={`gradient-${bar.key}-${activeChart}`}
+                        id={`barGradient-${bar.key}-${activeChart}`}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop offset="0%" stopColor={bar.color} stopOpacity={0.8} />
+                        <stop offset="95%" stopColor={bar.color} stopOpacity={0.3} />
+                      </linearGradient>
+                    ))
+                  ) : chartConfig.bars.length > 0 ? (
+                    // Single bar gradient
+                    <linearGradient
+                      id={`barGradient-${activeChart}`}
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
                       <stop offset="0%" stopColor={activeColor} stopOpacity={0.8} />
                       <stop offset="95%" stopColor={activeColor} stopOpacity={0.3} />
                     </linearGradient>
-                  )}
+                  ) : null}
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-subtle)" />
                 <XAxis
@@ -326,7 +351,14 @@ const Commodities = () => {
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(val) => val.slice(0, 7)}
-                  label={{ value: 'Date', position: 'insideBottom', offset: -15 }}
+                  label={{ 
+                    value: 'Date', 
+                    position: 'insideBottom', 
+                    offset: -15, 
+                    style: { 
+                      fill: 'var(--text-secondary)', 
+                      textAnchor: 'middle' 
+                    } }}
                 />
                 <YAxis
                   yAxisId="left"
@@ -372,7 +404,7 @@ const Commodities = () => {
                     ];
                   }}
                 />
-                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                <Legend wrapperStyle={{ paddingTop: '20px', color: 'var(--text-secondary)' }} />
 
                 {/* Bars - stacked or single */}
                 {chartConfig.bars.map((bar, index) => (
@@ -381,11 +413,19 @@ const Commodities = () => {
                     yAxisId="left"
                     dataKey={bar.key}
                     name={bar.name}
-                    fill={chartConfig.showStacked ? bar.color : 'url(#barGradient)'}
-                    stackId={chartConfig.showStacked ? 'stack' : undefined}
+                    fill={
+                      chartConfig.showStacked && chartConfig.bars.length > 1
+                        ? `url(#barGradient-${bar.key}-${activeChart})`
+                        : chartConfig.bars.length === 1
+                        ? `url(#barGradient-${activeChart})`
+                        : bar.color
+                    }
+                    stackId={chartConfig.showStacked && chartConfig.bars.length > 1 ? 'stack' : undefined}
                     radius={
-                      chartConfig.showStacked
-                        ? (index === chartConfig.bars.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0])
+                      chartConfig.showStacked && chartConfig.bars.length > 1
+                        ? index === chartConfig.bars.length - 1
+                          ? [4, 4, 0, 0]
+                          : [0, 0, 0, 0]
                         : [4, 4, 0, 0]
                     }
                     maxBarSize={50}

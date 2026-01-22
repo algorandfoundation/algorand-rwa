@@ -255,7 +255,7 @@ const PeraWalletCard = () => {
             <ResponsiveContainer width="100%" height={400}>
               <ComposedChart data={currentChartData}>
                 <defs>
-                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id={`barGradient-${activeChart}`} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={activeColor} stopOpacity={0.8} />
                     <stop offset="95%" stopColor={activeColor} stopOpacity={0.3} />
                   </linearGradient>
@@ -263,11 +263,18 @@ const PeraWalletCard = () => {
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-subtle)" />
                 <XAxis
                   dataKey="date"
-                  stroke="var(--text-secondary)"
+                  stroke="var(--text-tertiary)"
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(val) => val.slice(0, 7)}
-                  label={{ value: 'Date', position: 'insideBottom', offset: -15 }}
+                  label={{ 
+                    value: 'Date', 
+                    position: 'insideBottom', 
+                    offset: -15, 
+                    style: { 
+                      fill: 'var(--text-secondary)', 
+                      textAnchor: 'middle' 
+                    } }}
                 />
                 <YAxis
                   yAxisId="left"
@@ -311,12 +318,12 @@ const PeraWalletCard = () => {
                     ];
                   }}
                 />
-                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                <Legend wrapperStyle={{ paddingTop: '20px', color: 'var(--text-secondary)' }} />
                 <Bar
                   yAxisId="left"
                   dataKey="value"
                   name={chartConfig.monthlyName}
-                  fill="url(#barGradient)"
+                  fill={`url(#barGradient-${activeChart})`}
                   radius={[4, 4, 0, 0]}
                   maxBarSize={50}
                 />

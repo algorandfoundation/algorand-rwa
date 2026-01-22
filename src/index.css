@@ -1,28 +1,16 @@
 :root {
-  /* Premium Dark Palette */
-  --bg-void: #050505;
-  --bg-card: #0F0F11;
-  --bg-card-hover: #161618;
-  --bg-surface: #1A1A1D;
+  /* Base palette tokens (do not use directly in components) */
+  --light-bg: #f5f7fb;
+  --dark-bg: #001324;
 
-  /* Brand / Accent Colors */
-  --accent-primary: #00F090;
+  --accent-primary-light: #2d2df1;
+  --accent-secondary-light: #bfbff9;
+
   /* Algorand-ish Green/Teal */
-  --accent-secondary: #0075FF;
-  /* Electric Blue */
-  --accent-purple: #7000FF;
-  --accent-gradient: linear-gradient(135deg, var(--accent-primary) 0%, var(--accent-secondary) 100%);
+  --accent-primary-dark: #17cac6;
+  --accent-secondary-dark: #b9efee;
 
-  /* Text Colors */
-  --text-primary: #FFFFFF;
-  --text-secondary: #A1A1A6;
-  --text-tertiary: #6E6E77;
-
-  /* Borders */
-  --border-subtle: rgba(255, 255, 255, 0.08);
-  --border-highlight: rgba(255, 255, 255, 0.15);
-
-  /* Status Colors */
+  /* Status Colors (shared) */
   --success: #22c55e;
   --error: #ef4444;
 
@@ -41,6 +29,52 @@
   --font-size-xl: 1.5rem;
   --font-size-2xl: 2rem;
   --font-size-3xl: 2.5rem;
+}
+
+/* Dark theme (default) */
+:root[data-theme='dark'] {
+  /* Surfaces */
+  --bg-void: #001324;
+  --bg-card: #334250;
+  --bg-card-hover: #b9efee;
+  --bg-surface: #334250;
+
+  /* Text */
+  --text-primary: #17c1c6;
+  --text-secondary: #ffffff;
+  --text-tertiary: #ffffff;
+
+  /* Accents */
+  --accent-primary: var(--accent-primary-dark);
+  --accent-secondary: var(--accent-secondary-dark);
+  --accent-gradient: linear-gradient(135deg, #17cac6, #e7faf9);
+
+  /* Borders */
+  --border-subtle: rgba(148, 163, 184, 0.35);
+  --border-highlight: rgba(148, 163, 184, 0.65);
+}
+
+/* Light theme */
+:root[data-theme='light'] {
+  /* Surfaces */
+  --bg-void: #ffffff;
+  --bg-card: #f5f7fb;
+  --bg-card-hover: #e3e7f2;
+  --bg-surface: #f0f4ff;
+
+  /* Text */
+  --text-primary: #2d2df1;
+  --text-secondary: #4b5563;
+  --text-tertiary: #6b7280;
+
+  /* Accents */
+  --accent-primary: var(--accent-primary-light);
+  --accent-secondary: var(--accent-secondary-light);
+  --accent-gradient: linear-gradient(135deg, #2d2df1, #e9e9fd);
+
+  /* Borders */
+  --border-subtle: rgba(15, 23, 42, 0.08);
+  --border-highlight: rgba(15, 23, 42, 0.18);
 }
 
 body {
@@ -103,4 +137,13 @@ button {
   border: none;
   background: none;
   font-family: inherit;
+}
+
+/* Chart Legend Styling */
+.recharts-legend-item-text {
+  color: var(--text-secondary) !important;
+}
+
+.recharts-legend-wrapper {
+  color: var(--text-secondary) !important;
 }

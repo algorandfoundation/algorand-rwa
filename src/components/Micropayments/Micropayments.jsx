@@ -66,8 +66,8 @@ const Micropayments = () => {
                   date,
                   algo: parseFloat(cols[1]) || 0,
                   stable: parseFloat(cols[2]) || 0,
-                  hafn: parseFloat(cols[3]) || 0,
-                  total: parseFloat(cols[4]) || 0
+                  hafn: parseFloat(cols[6]) || 0,
+                  total: parseFloat(cols[3]) || 0
                 };
               }
 
@@ -102,8 +102,8 @@ const Micropayments = () => {
     if (!arr || arr.length === 0) return { value: 0, delta: null };
 
     const lastIndex = arr.length - 1;
-    const current = type === 'addresses' ? arr[lastIndex].cumulative : arr[lastIndex].total;
-    const previous = lastIndex > 0 ? (type === 'addresses' ? arr[lastIndex - 1].cumulative : arr[lastIndex - 1].total) : null;
+    const current = type === 'addresses' ? arr[lastIndex].total : arr[lastIndex].total;
+    const previous = lastIndex > 0 ? (type === 'addresses' ? arr[lastIndex - 1].total : arr[lastIndex - 1].total) : null;
 
     const delta = previous ? (current / previous) - 1 : null;
 
@@ -287,6 +287,36 @@ const Micropayments = () => {
           ) : (
             <ResponsiveContainer width="100%" height={400}>
               <ComposedChart data={currentChartData}>
+                <defs>
+                  {chartConfig.showStacked && chartConfig.bars.length > 1 ? (
+                    // Gradients for stacked bars using assetColors
+                    chartConfig.bars.map((bar) => (
+                      <linearGradient
+                        key={`gradient-${bar.key}-${activeChart}`}
+                        id={`barGradient-${bar.key}-${activeChart}`}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop offset="0%" stopColor={bar.color} stopOpacity={0.8} />
+                        <stop offset="95%" stopColor={bar.color} stopOpacity={0.3} />
+                      </linearGradient>
+                    ))
+                  ) : chartConfig.bars.length > 0 ? (
+                    // Single bar gradient
+                    <linearGradient
+                      id={`barGradient-${activeChart}`}
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="0%" stopColor={activeColor} stopOpacity={0.8} />
+                      <stop offset="95%" stopColor={activeColor} stopOpacity={0.3} />
+                    </linearGradient>
+                  ) : null}
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-subtle)" />
                 <XAxis
                   dataKey="date"
@@ -294,7 +324,14 @@ const Micropayments = () => {
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(val) => val.slice(0, 7)}
-                  label={{ value: 'Date', position: 'insideBottom', offset: -15 }}
+                  label={{ 
+                    value: 'Date', 
+                    position: 'insideBottom', 
+                    offset: -15, 
+                    style: { 
+                      fill: 'var(--text-secondary)', 
+                      textAnchor: 'middle' 
+                    } }}
                 />
                 <YAxis
                   yAxisId="left"
@@ -340,7 +377,7 @@ const Micropayments = () => {
                     ];
                   }}
                 />
-                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                <Legend wrapperStyle={{ paddingTop: '20px', color: 'var(--text-secondary)' }} />
 
                 {/* Stacked Bars for each asset type */}
                 {chartConfig.bars.map((bar, index) => (
@@ -349,9 +386,21 @@ const Micropayments = () => {
                     yAxisId="left"
                     dataKey={bar.key}
                     name={bar.name}
-                    fill={bar.color}
-                    stackId="stack"
-                    radius={index === chartConfig.bars.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0]}
+                    fill={
+                      chartConfig.showStacked && chartConfig.bars.length > 1
+                        ? `url(#barGradient-${bar.key}-${activeChart})`
+                        : chartConfig.bars.length === 1
+                        ? `url(#barGradient-${activeChart})`
+                        : bar.color
+                    }
+                    stackId={chartConfig.showStacked && chartConfig.bars.length > 1 ? 'stack' : undefined}
+                    radius={
+                      chartConfig.showStacked && chartConfig.bars.length > 1
+                        ? index === chartConfig.bars.length - 1
+                          ? [4, 4, 0, 0]
+                          : [0, 0, 0, 0]
+                        : [4, 4, 0, 0]
+                    }
                     maxBarSize={50}
                   />
                 ))}

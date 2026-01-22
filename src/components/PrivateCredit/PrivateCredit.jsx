@@ -8,7 +8,8 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  ResponsiveContainer
+  ResponsiveContainer,
+  Area
 } from 'recharts';
 import { ArrowUpRight } from 'lucide-react';
 import './PrivateCredit.css';
@@ -20,7 +21,7 @@ const PrivateCredit = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeChart, setActiveChart] = useState('market_cap');
+  const [activeChart, setActiveChart] = useState('deposits');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -80,17 +81,11 @@ const PrivateCredit = () => {
   }, []);
 
   const getKpiData = (arr, type) => {
-    if (type === 'properties') {
-      // Properties is just a single value, no array with dates
-      if (!arr || arr.length === 0) return { value: 0, delta: null };
-      return { value: arr[0].total, delta: null };
-    }
-
     if (!arr || arr.length === 0) return { value: 0, delta: null };
 
     const lastIndex = arr.length - 1;
     const current = arr[lastIndex].total;
-    const previous = lastIndex > 0 ? arr[lastIndex - 1].total : null;
+    const previous = lastIndex > 0 ? arr[lastIndex - 30].total : null;
 
     const delta = previous ? (current / previous) - 1 : null;
 
@@ -148,7 +143,7 @@ const PrivateCredit = () => {
       label: 'Borrows',
       value: formatCompactNumber(borrowsKpi.value),
       delta: borrowsKpi.delta,
-      color: 'var(--accent-secondary)',
+      color: 'var(--accent-primary)',
       hasChart: true
     }
   ];
@@ -159,7 +154,7 @@ const PrivateCredit = () => {
   ];
 
   const currentChartData = data[activeChart] || [];
-  const activeColor = kpis.find(k => k.id === activeChart)?.color || '#fff';
+  const activeColor = kpis.find(k => k.id === activeChart)?.color || 'var(--text-primary)';
 
 
   const getChartConfig = () => {
@@ -171,7 +166,7 @@ const PrivateCredit = () => {
           hasRightAxis: false,
           showStacked: true,
           valuePrefix: '$',
-          bars: [
+          area: [
             { key: 'total', name: 'Deposited Amount', color: activeColor }
           ]
         };
@@ -182,7 +177,7 @@ const PrivateCredit = () => {
           hasRightAxis: false,
           showStacked: false,
           valuePrefix: '$',
-          bars: [
+          area: [
             { key: 'total', name: 'Borrowed Amount', color: activeColor }
           ]
         };
@@ -228,7 +223,7 @@ const PrivateCredit = () => {
 
       <section className="chart-section">
         <div className="chart-header">
-          <h3>Performance Trends{activeChart === 'addresses' ? '' : ' by Asset Type'}</h3>
+          <h3>Performance Trends</h3>
           <div className="chart-pills">
             {chartOptions.map((opt) => (
               <button
@@ -251,12 +246,34 @@ const PrivateCredit = () => {
             <ResponsiveContainer width="100%" height={400}>
               <ComposedChart data={currentChartData}>
                 <defs>
-                  {!chartConfig.showStacked && (
-                    <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor={activeColor} stopOpacity={0.8} />
-                      <stop offset="95%" stopColor={activeColor} stopOpacity={0.3} />
+                  {chartConfig.showStacked && chartConfig.area.length > 1 ? (
+                    // Gradients for stacked areas
+                    chartConfig.area.map((bar) => (
+                      <linearGradient
+                        key={`gradient-${bar.key}-${activeChart}`}
+                        id={`areaGradient-${bar.key}-${activeChart}`}
+                        x1="0"
+                        y1="0"
+                        x2="0"
+                        y2="1"
+                      >
+                        <stop offset="0%" stopColor={bar.color} stopOpacity={0.4} />
+                        <stop offset="100%" stopColor={bar.color} stopOpacity={0.05} />
+                      </linearGradient>
+                    ))
+                  ) : chartConfig.area.length > 0 ? (
+                    // Single area gradient
+                    <linearGradient
+                      id={`areaGradient-${activeChart}`}
+                      x1="0"
+                      y1="0"
+                      x2="0"
+                      y2="1"
+                    >
+                      <stop offset="0%" stopColor={activeColor} stopOpacity={0.4} />
+                      <stop offset="100%" stopColor={activeColor} stopOpacity={0.05} />
                     </linearGradient>
-                  )}
+                  ) : null}
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border-subtle)" />
                 <XAxis
@@ -265,7 +282,14 @@ const PrivateCredit = () => {
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(val) => val.slice(0, 7)}
-                  label={{ value: 'Date', position: 'insideBottom', offset: -15 }}
+                  label={{ 
+                    value: 'Date', 
+                    position: 'insideBottom', 
+                    offset: -15, 
+                    style: { 
+                      fill: 'var(--text-secondary)', 
+                      textAnchor: 'middle' 
+                    } }}
                 />
                 <YAxis
                   yAxisId="left"
@@ -311,23 +335,26 @@ const PrivateCredit = () => {
                     ];
                   }}
                 />
-                <Legend wrapperStyle={{ paddingTop: '20px' }} />
+                <Legend wrapperStyle={{ paddingTop: '20px', color: 'var(--text-secondary)' }} />
 
-                {/* Bars - stacked or single */}
-                {chartConfig.bars.map((bar, index) => (
-                  <Bar
+                {/* Areas - stacked or single */}
+                {chartConfig.area.map((bar, index) => (
+                  <Area
                     key={bar.key}
                     yAxisId="left"
+                    type="monotone"
                     dataKey={bar.key}
                     name={bar.name}
-                    fill={chartConfig.showStacked ? bar.color : 'url(#barGradient)'}
-                    stackId={chartConfig.showStacked ? 'stack' : undefined}
-                    radius={
-                      chartConfig.showStacked
-                        ? (index === chartConfig.bars.length - 1 ? [4, 4, 0, 0] : [0, 0, 0, 0])
-                        : [4, 4, 0, 0]
+                    fill={
+                      chartConfig.showStacked && chartConfig.area.length > 1
+                        ? `url(#areaGradient-${bar.key}-${activeChart})`
+                        : chartConfig.area.length === 1
+                        ? `url(#areaGradient-${activeChart})`
+                        : bar.color
                     }
-                    maxBarSize={50}
+                    stroke={bar.color}
+                    strokeWidth={2}
+                    stackId={chartConfig.showStacked && chartConfig.area.length > 1 ? 'stack' : undefined}
                   />
                 ))}
               </ComposedChart>

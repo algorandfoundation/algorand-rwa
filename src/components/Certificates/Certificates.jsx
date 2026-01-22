@@ -20,7 +20,7 @@ const Certificates = () => {
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeChart, setActiveChart] = useState('market_cap');
+  const [activeChart, setActiveChart] = useState('certificates');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -144,7 +144,7 @@ const Certificates = () => {
       label: 'Monthly Active Addresses',
       value: formatCompactNumber(addressesKpi.value),
       delta: addressesKpi.delta,
-      color: 'var(--accent-secondary)',
+      color: 'var(--accent-primary)',
       hasChart: true
     }
   ];
@@ -236,7 +236,7 @@ const Certificates = () => {
             <ResponsiveContainer width="100%" height={400}>
               <ComposedChart data={currentChartData}>
                 <defs>
-                  <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id={`barGradient-${activeChart}`} x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor={activeColor} stopOpacity={0.8} />
                     <stop offset="95%" stopColor={activeColor} stopOpacity={0.3} />
                   </linearGradient>
@@ -248,7 +248,14 @@ const Certificates = () => {
                   tickLine={false}
                   axisLine={false}
                   tickFormatter={(val) => val.slice(0, 7)}
-                  label={{ value: 'Date', position: 'insideBottom', offset: -15 }}
+                  label={{ 
+                    value: 'Date', 
+                    position: 'insideBottom', 
+                    offset: -15, 
+                    style: { 
+                      fill: 'var(--text-secondary)', 
+                      textAnchor: 'middle' 
+                    } }}
                 />
                 <YAxis
                   yAxisId="left"
@@ -292,12 +299,12 @@ const Certificates = () => {
                     ];
                   }}
                 />
-                <Legend wrapperStyle={{ paddingTop: '20px', color: '#ffffff' }} />
+                <Legend wrapperStyle={{ paddingTop: '20px', color: 'var(--text-secondary)' }} />
                 <Bar
                   yAxisId="left"
                   dataKey="total"
                   name={chartConfig.monthlyName}
-                  fill="url(#barGradient)"
+                  fill={`url(#barGradient-${activeChart})`}
                   radius={[4, 4, 0, 0]}
                   maxBarSize={50}
                 />
